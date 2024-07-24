@@ -23,6 +23,7 @@ from ..utils.quantization_config import (
     FbgemmFp8Config,
     GPTQConfig,
     HqqConfig,
+    MoeConfig,
     QuantizationConfigMixin,
     QuantizationMethod,
     QuantoConfig,
@@ -35,7 +36,9 @@ from .quantizer_eetq import EetqHfQuantizer
 from .quantizer_fbgemm_fp8 import FbgemmFp8HfQuantizer
 from .quantizer_gptq import GptqHfQuantizer
 from .quantizer_hqq import HqqHfQuantizer
+from .quantizer_moe import MoeHfQuantizer
 from .quantizer_quanto import QuantoHfQuantizer
+
 
 
 AUTO_QUANTIZER_MAPPING = {
@@ -47,6 +50,7 @@ AUTO_QUANTIZER_MAPPING = {
     "quanto": QuantoHfQuantizer,
     "eetq": EetqHfQuantizer,
     "hqq": HqqHfQuantizer,
+    "moe": MoeHfQuantizer,
     "fbgemm_fp8": FbgemmFp8HfQuantizer,
 }
 
@@ -59,6 +63,7 @@ AUTO_QUANTIZATION_CONFIG_MAPPING = {
     "aqlm": AqlmConfig,
     "quanto": QuantoConfig,
     "hqq": HqqConfig,
+    "moe": MoeConfig,
     "fbgemm_fp8": FbgemmFp8Config,
 }
 

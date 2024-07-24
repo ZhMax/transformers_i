@@ -43,6 +43,7 @@ class QuantizationMethod(str, Enum):
     EETQ = "eetq"
     HQQ = "hqq"
     FBGEMM_FP8 = "fbgemm_fp8"
+    MOE = "moe"
 
 
 class AWQLinearVersion(str, Enum):
@@ -1079,3 +1080,53 @@ class FbgemmFp8Config(QuantizationConfigMixin):
         loading_attibutes = ["activation_scale_ub"]
         loading_attibutes_dict = {i: j for i, j in attibutes_dict.items() if i in loading_attibutes}
         return loading_attibutes_dict
+
+
+@dataclass
+class MoeConfig(QuantizationConfigMixin):
+    """
+    This is a wrapper class about `moe` parameters.
+
+    Args:
+        num_local_experts (`int`, *optional*, defaults to 8):
+            Total number of experts in a MoE block.
+        num_experts_per_tok (`int`, *optional*, defaults to 2):
+            Number of experts to route per-token.
+        mlp_blocks_not_to_replace (`Optional[List[str]]`, *optional*):
+            List of full paths of `mlp` blocks that shall not be replaced.
+        kwargs (`Dict[str, Any]`, *optional*):
+            Additional parameters from which to initialize the configuration object.
+    """
+
+    def __init__(
+        self,
+        num_local_experts: int = 8,
+        num_experts_per_tok: int = 2,
+        mlp_blocks_not_to_replace: Optional[List[str]] = None,
+        linear_layers: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ):
+        self.quant_method = QuantizationMethod.MOE
+        self.num_local_experts = num_local_experts
+        self.num_experts_per_tok = num_experts_per_tok
+        self.mlp_blocks_not_to_replace = mlp_blocks_not_to_replace
+        self.linear_layers = linear_layers
+
+        self.post_init()
+
+    def post_init(self):
+        r"""
+        Safety checker that arguments are correct - also replaces some NoneType arguments with their default values.
+        """
+        if not isinstance(self.num_local_experts, int):
+            raise ValueError("in_group_size must be an int")
+        if not isinstance(self.num_experts_per_tok, int):
+            raise ValueError("out_group_size must be an int")
+
+        if self.mlp_blocks_not_to_replace is not None and not isinstance(
+            self.mlp_blocks_not_to_replace, list
+        ):
+            raise ValueError("moe_blocks_not_to_replace must be a list of strings")
+
+        if self.mlp_blocks_not_to_replace is None:
+            self.mlp_blocks_not_to_replace = []

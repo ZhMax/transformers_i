@@ -94,6 +94,7 @@ _import_structure = {
         "run_hp_search_sigopt",
         "run_hp_search_wandb",
     ],
+    "moe": ["replace_with_moe_mlp", "replace_with_clustered_linear"],
     "peft": ["PeftAdapterMixin"],
     "quanto": ["replace_with_quanto_layers"],
 }
@@ -176,6 +177,7 @@ if TYPE_CHECKING:
         run_hp_search_sigopt,
         run_hp_search_wandb,
     )
+    from .moe import replace_with_moe_mlp, replace_with_clustered_linear
     from .peft import PeftAdapterMixin
     from .quanto import replace_with_quanto_layers
 else:
